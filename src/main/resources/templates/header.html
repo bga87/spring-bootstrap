@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <body>
+
+        <span th:fragment="accountSection">Пользователь: <span style="font-weight: bold" th:text="${#authentication.name}"></span><br><a href="/logout">Выйти</a></span>
+
+    </body>
+
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="/styles/style.css" >
+        <title>Данные пользователя</title>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td align="right" th:insert="header :: accountSection">
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="user-info styled-table" th:object="${user}">
+                        <tr>
+                            <td>Имя</td>
+                            <td th:text="*{name}">name</td>
+                        </tr>
+                        <tr>
+                            <td>Фамилия</td>
+                            <td th:text="*{surname}">surname</td>
+                        </tr>
+                        <tr>
+                            <td>Возраст</td>
+                            <td th:text="*{age}">age</td>
+                        </tr>
+                        <tr>
+                            <td>Профессия</td>
+                            <td th:text="*{job.isPresent() ? job.get().name : 'Безработный'}">jobName</td>
+                        </tr>
+                        <tr th:if="*{job.isPresent()}">
+                            <td>Зарплата</td>
+                            <td th:text="*{job.get().salary}">salary
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Логин</td>
+                            <td th:text="*{securityDetails.login}">login</td>
+                        </tr>
+                        <tr>
+                            <td>Пароль</td>
+                            <td th:text="*{securityDetails.password}">password</td>
+                        </tr>
+                        <tr>
+                            <td>Права</td>
+                            <td>
+                                <ul>
+                                    <li th:each="role : *{securityDetails.roles}">
+                                        <span th:text="${role.displayName}">role_name</span>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr sec:authorize="hasRole('ROLE_ADMIN')">
+                            <td colspan="2" style="border: none; text-align: center">
+                                <a href="/users/admin" style="font-weight: bold; font-style: normal">На главную</a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

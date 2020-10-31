@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="/styles/style.css" >
+        <title>Список пользователей</title>
+    </head>
+    <body>
+        <form action="/users/admin?action=showCreateUserForm" method="POST">
+            <table>
+                <tr>
+                    <td align="right" th:insert="header :: accountSection">
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="styled-table">
+                            <tr>
+                                <th>Пользователь</th>
+                                <th>Действия</th>
+                            </tr>
+                            <tr th:each="user : ${users}">
+                                <td th:if="${!user.name.equals('admin')}">
+                                    <a th:href="@{/users/user/show/{userId}(userId=${user.id})}"
+                                       th:text="${user.name + #strings.prepend(user.surname, ' ')}">Имя Фамилия пользователя</a>
+                                </td>
+                                <td th:if="${!user.name.equals('admin')}"> <!-- Не показываем админскую учетку-->
+                                    <a th:href="@{/users/admin?action=delete(userId=${user.id})}">Удалить</a>
+                                    <br>
+                                    <a th:href="@{/users/admin?action=showUpdateUserForm(userId=${user.id})}">Изменить</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <input type="submit" value="Добавить пользователя">
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>

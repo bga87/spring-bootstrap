@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ошибка</title>
+</head>
+<body>
+    <p th:insert="header :: accountSection"></p>
+    <p style="color: red; font-weight: bold" th:text="${errorMessage} + '!'">Ошибка</p>
+    <a href="/users/admin" style="font-weight: bold; font-style: normal">На главную</a>
+</body>
+</html>
