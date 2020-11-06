@@ -67,7 +67,7 @@ public class WebRequestSecurityConfig extends WebSecurityConfigurerAdapter {
                 .regexMatchers("\\/users\\/admin\\?action=delete&userId=1000").denyAll()
                 .antMatchers("/users/**").hasAuthority("ROLE_ADMIN")
                 .and()
-                .formLogin().successHandler(new LoginSuccessHandler())
+                .formLogin().loginPage("/").successHandler(new LoginSuccessHandler())
                 .and()
                 .exceptionHandling().accessDeniedPage("/users/authorizationFailure")
                 .and()

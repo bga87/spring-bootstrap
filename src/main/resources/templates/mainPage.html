@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="/bootstrap-4.5.3/css/bootstrap.min.css"> <!-- Подключаем bootstrap -->
+		<style>
+			html, body {
+				height: 100%;
+			}
+		</style>
+		<title>Admin panel</title>
+	</head>
+	<body>
+		<div class="container-fluid h-100 d-flex flex-column">
+			<div class="row pt-2 bg-dark">
+				<div class="col">
+					<h5 class="text-white"><span class="font-weight-bold">admin@mail.ru</span> with roles:<span class="text-uppercase"> admin user</span></h5>
+				</div>
+				<div class="col-auto">
+					<span class="text-white-50">Logout</span>
+				</div>
+			</div>
+			<div class="row flex-grow-1">
+				<div class="col-2 px-0 pt-3">
+					<div class="nav flex-column nav-pills" id="v-pills-tabs" role="tablist" aria-orientation="vertical">
+						<a class="nav-link active" id="v-pills-admin-tab" data-toggle="pill" href="#v-pills-admin" role="tab" aria-controls="v-pills-admin" aria-selected="true">Admin</a>
+						<a class="nav-link" id="v-pills-user-tab" data-toggle="pill" href="#v-pills-user" role="tab" aria-controls="v-pills-user" aria-selected="false">User</a>
+					</div>
+				</div>
+				<div class="col p-4 bg-light">
+					<div class="tab-content" id="v-pills-tabContent">
+						<div class="tab-pane fade show active" id="v-pills-admin" role="tabpanel" aria-labelledby="v-pills-admin-tab">
+							<h1>Admin panel</h1>
+							<nav>
+								<div class="nav nav-tabs" id="nav-tab" role="tablist">
+									<a class="nav-link active" id="nav-userstable-tab" data-toggle="tab" href="#nav-userstable" role="tab" aria-controls="nav-userstable" aria-selected="true">Users table</a>
+									<a class="nav-link" id="nav-newuser-tab" data-toggle="tab" href="#nav-newuser" role="tab" aria-controls="nav-newuser" aria-selected="false">New User</a>
+								</div>
+							</nav>
+							<div class="tab-content border border-top-0 rounded-bottom" id="nav-tabContent">
+								<div class="tab-pane fade show active" id="nav-userstable" role="tabpanel" aria-labelledby="nav-userstable-tab">
+									<div class="border-bottom pl-4 py-2 bg-light">
+										<span class="h4">All users</span>
+									</div>
+									<div class="p-4 bg-white">
+										<table class="table table-striped table-hover">
+											<thead>
+												<tr>
+													<th scope="col">ID</th>
+													<th scope="col">First Name</th>
+													<th scope="col">Surname</th>
+													<th scope="col">Age</th>
+													<th scope="col">Job</th>
+													<th scope="col">Income</th>
+													<th scope="col">Login</th>
+													<th scope="col">Roles</th>
+													<th scope="col" class="text-center border-left">Actions</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<th scope="row" class="align-middle">2</td>
+													<td id="firstName-2" class="align-middle">admin</td>
+													<td id="surname-2" class="align-middle">admin</td>
+													<td id="age-2" class="align-middle">35</td>
+													<td id="job-2" class="align-middle">unemployed</td>
+													<td id="salary-2" class="align-middle">0</td>
+													<td id="email-2" class="align-middle">admin</td>
+													<td id="roles-2" class="align-middle"><span>ADMIN</span><br><span>USER</span></td>
+													<td class="align-middle text-center border-left">
+														<button type="button" class="btn btn-info">Edit</button>
+														<button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#deleteUserModal" data-userid="2">Delete</button>
+													</td>
+												</tr>
+												<tr>
+													<th scope="row" class="align-middle">3</td>
+													<td id="firstName-3" class="align-middle">user</td>
+													<td id="surname-3" class="align-middle">user</td>
+													<td id="age-3" class="align-middle">30</td>
+													<td id="job-3" class="align-middle">unemployed</td>
+													<td id="salary-3" class="align-middle">0</td>
+													<td id="email-3" class="align-middle">user</td>
+													<td id="roles-3" class="align-middle"><span>USER</span></td>
+													<td class="align-middle text-center border-left">
+														<button type="button" class="btn btn-info">Edit</button>
+														<button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#deleteUserModal" data-userid="3">Delete</button>
+													</td>
+												</tr>
+												<tr>
+													<th scope="row" class="align-middle">4</td>
+													<td id="firstName-4" class="align-middle">Dennis</td>
+													<td id="surname-4" class="align-middle">Chambers</td>
+													<td id="age-4" class="align-middle">59</td>
+													<td id="job-4" class="align-middle">Drummer</td>
+													<td id="salary-4" class="align-middle">57000</td>
+													<td id="email-4" class="align-middle">dchams</td>
+													<td id="roles-4" class="align-middle"><span>USER</span></td>
+													<td class="align-middle text-center border-left">
+														<button type="button" class="btn btn-info">Edit</button>
+														<button type="button" id="deleteBtn" class="btn btn-danger ml-1" data-toggle="modal" data-target="#deleteUserModal" data-userid="4">Delete</button>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="tab-pane fade" id="nav-newuser" role="tabpanel" aria-labelledby="nav-newuser-tab">
+									<div class="border-bottom pl-4 py-2 bg-light">
+										<span class="h4">Add new users</span>
+									</div>
+									<div class="bg-white py-4 d-flex justify-content-center">
+										<form style="width: 30%" class="text-center" method="POST" novalidate>
+											<div class="form-group">
+												<label class="h5 font-weight-bold" for="firstName">First name<span class="text-danger">*</span></label>
+												<input type="text" class="form-control is-invalid" id="firstName" name="firstName" required>
+												<div class="invalid-feedback">
+													First name error msg.
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="h5 font-weight-bold" for="surname">Surname<span class="text-danger">*</span></label>
+												<input type="text" class="form-control is-invalid" id="surname" name="surname" required>
+												<div class="invalid-feedback">
+													Surname error msg.
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="h5 font-weight-bold" for="age">Age<span class="text-danger">*</span></label>
+												<input type="number" class="form-control is-invalid" id="age" name="age" required>
+												<div class="invalid-feedback">
+													Age error msg.
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="h5 font-weight-bold" for="job">Job</label>
+												<input type="text" class="form-control" id="job" name="job">
+											</div>
+											<div class="form-group">
+												<label class="h5 font-weight-bold" for="salary">Salary</label>
+												<input type="number" class="form-control" id="salary" name="salary">
+											</div>
+											<div class="form-group">
+												<label class="h5 font-weight-bold" for="email">Email<span class="text-danger">*</span></label>
+												<input type="email" class="form-control is-invalid" id="email" name="email" required>
+												<div class="invalid-feedback">
+													Email error msg.
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="h5 font-weight-bold" for="password">Password<span class="text-danger">*</span></label>
+												<input type="password" class="form-control is-invalid"  id="password" name="password" required>
+												<div class="invalid-feedback">
+													Password error msg.
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="h5 font-weight-bold" for="roles">Roles</label>
+												<select class="form-control" id="roles" name="roles" multiple size="2">
+													<option value="admin">ADMIN</option>
+													<option value="user">USER</option>
+												</select>
+											</div>
+											<button type="submit" class="btn btn-success mt-3"><span class="h4">Add new user</span></button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="v-pills-user" role="tabpanel" aria-labelledby="v-pills-user-tab">
+							<h1>User information-page</h1>
+							<div class="border rounded bg-white">
+								<div class="border-bottom bg-light pl-4 py-2">
+									<span class="h4">About user</span>
+								</div>
+								<div class="p-4">
+									<table class="table table-striped">
+										<thead>
+											<tr>
+												<th scope="col">ID</th>
+												<th scope="col">First Name</th>
+												<th scope="col">Surname</th>
+												<th scope="col">Age</th>
+												<th scope="col">Job</th>
+												<th scope="col">Income</th>
+												<th scope="col">Login</th>
+												<th scope="col">Roles</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<th scope="row" class="align-middle">3</td>
+												<td class="align-middle">user</td>
+												<td class="align-middle">user</td>
+												<td class="align-middle">30</td>
+												<td class="align-middle">unemployed</td>
+												<td class="align-middle">0</td>
+												<td class="align-middle">user</td>
+												<td class="align-middle"><span>USER</span></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Модальные окна -->
+		<!-- Удаление пользователя -->
+		<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="deleteUserModalLabel">Please confirm deletion of user with:</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body d-flex justify-content-center">
+						<form style="width: 65%;" class="text-center" method="POST">
+							<fieldset disabled>
+								<div class="form-group">
+									<label class="h5 font-weight-bold" for="id">ID</label>
+									<input type="text" class="form-control text-center" id="id" name="id">
+								</div>
+								<div class="form-group">
+									<label class="h5 font-weight-bold" for="firstName">First name</label>
+									<input type="text" class="form-control text-center" id="firstName">
+								</div>
+								<div class="form-group">
+									<label class="h5 font-weight-bold" for="surname">Surname</span></label>
+									<input type="text" class="form-control text-center" id="surname">
+								</div>
+								<div class="form-group">
+									<label class="h5 font-weight-bold" for="age">Age</label>
+									<input type="number" class="form-control text-center" id="age">
+								</div>
+								<div class="form-group">
+									<label class="h5 font-weight-bold" for="job">Job</label>
+									<input type="text" class="form-control text-center" id="job">
+								</div>
+								<div class="form-group">
+									<label class="h5 font-weight-bold" for="salary">Salary</label>
+									<input type="number" class="form-control text-center" id="salary">
+								</div>
+								<div class="form-group">
+									<label class="h5 font-weight-bold" for="email">Email</label>
+									<input type="email" class="form-control text-center" id="email">
+								</div>
+								<div class="form-group">
+									<label class="h5 font-weight-bold" for="roles">Roles</label>
+									<select class="form-control text-center" id="roles" multiple size="2">
+										<option>ADMIN</option>
+										<option>USER</option>
+									</select>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+					<div class="modal-footer justify-content-center">
+						<form method="POST">
+							<button type="submit" class="btn btn-danger">Confirm</button>
+						</form>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Подключаем bootstrap -->
+		<script src="/jquery/jquery-3.5.1.min.js"></script>
+		<script src="/bootstrap-4.5.3/js/bootstrap.min.js"></script>
+		<script>
+			$('#deleteUserModal').on('show.bs.modal', function (event) {
+  				var button = $(event.relatedTarget) // Button that triggered the modal
+  				var userId = button.data('userid') // Extract info from data-* attributes
+				// Update the modal's content with jQuery
+				var modal = $(this)
+				modal.find('#id').val(userId)
+				modal.find('#firstName').val($('#firstName-' + userId).text())
+				modal.find('#surname').val($('#surname-' + userId).text())
+				modal.find('#age').val($('#age-' + userId).text())
+				modal.find('#job').val($('#job-' + userId).text())
+				modal.find('#salary').val($('#salary-' + userId).text())
+				modal.find('#email').val($('#email-' + userId).text())
+				modal.find('#roles').children().each(function() {
+					var availableRole = $(this);
+					$('#roles-' + userId).children('span').each(function() {
+						if ($(this).text().toLowerCase() === availableRole.text().toLowerCase()) {
+							availableRole.attr('selected', '')
+							return false
+						}
+					})
+				})
+				modal.find('.modal-footer form').attr('action', 'http://localhost:8080/users/' + userId)
+			});
+			$('#deleteUserModal').on('hide.bs.modal', function (event) {
+				var modal = $(this)
+				modal.find('#roles').children().removeAttr('selected')
+			});
+			$('#delConfirmBtn').click(function() {
+				$('#deleteUserModal form').submit()
+			});
+		</script>
+	</body>
+</html>
