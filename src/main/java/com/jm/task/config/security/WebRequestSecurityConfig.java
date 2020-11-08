@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 import java.util.Set;
@@ -35,14 +36,14 @@ public class WebRequestSecurityConfig extends WebSecurityConfigurerAdapter {
         // Админ наделен всеми доступными правами
         usersService.save(
                 new User("admin", "admin", (byte) 0, null,
-                        new SecurityDetails("admin", "admin", availableRoles)
+                        new SecurityDetails("admin@mail.ru", "admin", availableRoles)
                 )
         );
         // Обычный пользователь для тестирования, чтобы не
         // приходилось каждый раз создавать его из-под админа
         usersService.save(
                 new User("user", "user", (byte) 0, null,
-                        new SecurityDetails("user", "user", availableRoles.stream()
+                        new SecurityDetails("user@mail.ru", "user", availableRoles.stream()
                                 .filter(role -> role.getRoleName().equals("ROLE_USER")).collect(Collectors.toSet())))
         );
     }
@@ -60,12 +61,14 @@ public class WebRequestSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/users/user/show/{userId}").access(
-                "@userIdMatcher.isAuthenticatedUserId(authentication, #userId) or hasAuthority('ROLE_ADMIN')"
-        )
-                .antMatchers("/users/user/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                .regexMatchers("\\/users\\/admin\\?action=delete&userId=1000").denyAll()
-                .antMatchers("/users/**").hasAuthority("ROLE_ADMIN")
+                .regexMatchers("/", "/bootstrap.*", "/jquery.*").permitAll()
+//                .antMatchers("/user/show/{userId}").access(
+//                "@userIdMatcher.isAuthenticatedUserId(authentication, #userId) or hasAuthority('ROLE_ADMIN')"
+//        )
+                .antMatchers("/user/**").access("hasAuthority('ROLE_USER') and !hasAuthority('ROLE_ADMIN')")
+                .regexMatchers("/admin/1000/*").denyAll()
+                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/**").denyAll()
                 .and()
                 .formLogin().loginPage("/").successHandler(new LoginSuccessHandler())
                 .and()

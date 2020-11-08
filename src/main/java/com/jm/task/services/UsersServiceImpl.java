@@ -71,7 +71,7 @@ public class UsersServiceImpl implements UsersService {
                 .filter(role -> userDto.getRoles().contains(role.getRoleName()))
                 .collect(Collectors.toSet());
         return new User(userDto.getName(), userDto.getSurname(), userDto.getAge(), job,
-                new SecurityDetails(userDto.getLogin(), userDto.getPassword(), userRoles));
+                new SecurityDetails(userDto.getEmail(), userDto.getPassword(), userRoles));
 
     }
 

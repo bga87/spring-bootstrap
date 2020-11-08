@@ -21,8 +21,8 @@ public class SpringBootCrudApplication {
     public Set<Role> availableRoles(ServletContext context) {
         Set<Role> roles = new HashSet<>(
                 Arrays.asList(
-                        new Role("ROLE_USER", "Пользователь"),
-                        new Role("ROLE_ADMIN", "Администратор")
+                        new Role("ROLE_ADMIN", "Admin"),
+                        new Role("ROLE_USER", "User")
                 )
         );
         context.setAttribute("availableRoles", roles);

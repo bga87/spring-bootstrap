@@ -35,7 +35,7 @@ public class UserDaoImpl implements UserDao {
                 throw new IllegalStateException("Пользователь " + user + " был сохранен в базе данных ранее");
             }
         } else {
-            throw new IllegalStateException("Логин " + user.getSecurityDetails().getLogin() + " уже занят! Придумайте другой логин.");
+            throw new IllegalStateException("Логин " + user.getSecurityDetails().getEmail() + " уже занят! Придумайте другой логин.");
         }
 
         return savedUserId;
@@ -64,8 +64,8 @@ public class UserDaoImpl implements UserDao {
 
     private boolean userHasUniqueLogin(User user, EntityManager entityManager) {
         return entityManager.createQuery("SELECT u FROM User u " +
-                "WHERE u.securityDetails.login = :login", User.class)
-                .setParameter("login", user.getSecurityDetails().getLogin())
+                "WHERE u.securityDetails.email = :login", User.class)
+                .setParameter("login", user.getSecurityDetails().getEmail())
                 .getResultList().size() == 0;
     }
 
@@ -121,7 +121,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getUserByLogin(String login) {
         return entityManager.createQuery("SELECT u FROM User u LEFT JOIN FETCH u.securityDetails.roles " +
-                "WHERE u.securityDetails.login = :login", User.class)
+                "WHERE u.securityDetails.email = :login", User.class)
                 .setParameter("login", login)
                 .getSingleResult();
     }
@@ -143,9 +143,9 @@ public class UserDaoImpl implements UserDao {
 
             if (!targetUser.getSecurityDetails().equals(user.getSecurityDetails())) {
                 // данные доступа поменялись
-                if (!loginsAreTheSame(targetUser.getSecurityDetails().getLogin(), user.getSecurityDetails().getLogin()) &&
+                if (!loginsAreTheSame(targetUser.getSecurityDetails().getEmail(), user.getSecurityDetails().getEmail()) &&
                         !userHasUniqueLogin(user, entityManager)) {
-                    throw new IllegalStateException("Логин " + user.getSecurityDetails().getLogin() + " уже занят! Придумайте другой логин.");
+                    throw new IllegalStateException("Логин " + user.getSecurityDetails().getEmail() + " уже занят! Придумайте другой логин.");
                 }
                 targetUser.setSecurityDetails(user.getSecurityDetails());
                 setRolesFromPersistentIfAlreadyExist(targetUser, entityManager);

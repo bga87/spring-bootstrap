@@ -20,9 +20,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         boolean isAdmin = AuthorityUtils.authorityListToSet(authentication.getAuthorities()).stream()
                 .anyMatch(roleName -> roleName.equalsIgnoreCase("role_admin"));
-        httpServletResponse.sendRedirect(
-                isAdmin ?
-                        "/users/admin" :
-                        "/users/user/" + ((User) authentication.getPrincipal()).getId());
+        httpServletResponse.sendRedirect(isAdmin ? "/admin" : "/user");
     }
 }

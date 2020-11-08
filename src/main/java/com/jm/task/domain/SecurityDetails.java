@@ -16,7 +16,7 @@ import java.util.Set;
 @Embeddable
 public class SecurityDetails {
     @Column(nullable = false)
-    private String login;
+    private String email;
 
     @Column(nullable = false)
     private String password;
@@ -32,18 +32,18 @@ public class SecurityDetails {
     public SecurityDetails() {
     }
 
-    public SecurityDetails(String login, String password, Set<Role> roles) {
-        this.login = login;
+    public SecurityDetails(String email, String password, Set<Role> roles) {
+        this.email = email;
         this.password = password;
         this.roles = roles;
     }
 
-    public String getLogin() {
-        return login;
+    public String getEmail() {
+        return email;
     }
 
-    public void setLogin(String loginName) {
-        this.login = loginName;
+    public void setEmail(String loginName) {
+        this.email = loginName;
     }
 
     public String getPassword() {
@@ -64,13 +64,13 @@ public class SecurityDetails {
 
     @Override
     public int hashCode() {
-        return Objects.hash(login, password, roles);
+        return Objects.hash(email, password, roles);
     }
 
     @Override
     public boolean equals(Object obj) {
         return this == obj || ((obj instanceof SecurityDetails) &&
-                ((SecurityDetails) obj).login.equalsIgnoreCase(login) &&
+                ((SecurityDetails) obj).email.equalsIgnoreCase(email) &&
                 ((SecurityDetails) obj).password.equals(password) &&
                 ((SecurityDetails) obj).roles.equals(roles));
     }
@@ -78,7 +78,7 @@ public class SecurityDetails {
     @Override
     public String toString() {
         return "SecurityDetails{" +
-                "login='" + login + '\'' +
+                "login='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", roles=" + roles +
                 '}';

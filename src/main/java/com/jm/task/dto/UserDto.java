@@ -17,15 +17,11 @@ public class UserDto {
     private byte age;
     private String jobName;
     private int salary;
-    private  String login;
+    private  String email;
     private String password;
     private Set<String> roles;
 
     public UserDto() {
-        name = "Введите имя";
-        surname = "Ведите фамилию";
-        jobName = "Введите профессию";
-        login = "Введите логин";
     }
 
     public UserDto(User user) {
@@ -33,7 +29,7 @@ public class UserDto {
         name = user.getName();
         surname = user.getSurname();
         age = user.getAge();
-        login = user.getSecurityDetails().getLogin();
+        email = user.getSecurityDetails().getEmail();
         password = user.getSecurityDetails().getPassword();
         roles = user.getSecurityDetails().getRoles().stream()
                 .map(Role::getRoleName)
@@ -70,12 +66,12 @@ public class UserDto {
         this.age = age;
     }
 
-    public String getLogin() {
-        return login;
+    public String getEmail() {
+        return email;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -119,7 +115,7 @@ public class UserDto {
                 ", age=" + age +
                 ", jobName='" + jobName + '\'' +
                 ", salary=" + salary +
-                ", login='" + login + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", roles=" +  roles +
                 '}';

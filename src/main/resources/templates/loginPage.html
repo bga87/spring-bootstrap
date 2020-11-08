@@ -8,13 +8,11 @@
     </head>
     <body class="py-5">
         <div class="container">
-            <div class="w-25 border border-danger rounded mx-auto text-center text-danger py-1"
-                 style="background-color: RGBA(220, 53, 69, 0.25);" th:if="${param.error}">
-                <span>Invalid username or password.</span>
+            <div th:if="${param.error}" class="w-25 alert alert-danger rounded mx-auto text-center">
+                Invalid username or password
             </div>
-            <div class="w-25 border border-success rounded mx-auto text-center text-success py-1"
-                 style="background-color: RGBA(40, 167, 69, 0.25);" th:if="${param.logout}">
-                <span>You have been logged out.</span>
+            <div th:if="${param.logout}" class="w-25 alert alert-success rounded mx-auto text-center">
+                You have been logged out
             </div>
             <form class="w-25 mx-auto mt-2 text-center" method="post">
                 <h2>Please sign in</h2>

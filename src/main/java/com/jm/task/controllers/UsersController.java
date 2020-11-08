@@ -4,8 +4,10 @@ package com.jm.task.controllers;
 import com.jm.task.domain.User;
 import com.jm.task.dto.UserDto;
 import com.jm.task.services.UsersService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,8 +23,8 @@ import java.util.List;
 
 
 @Controller
-@RequestMapping("/users")
-@SessionAttributes(names = {"newUserData", "userData"})
+@RequestMapping
+@SessionAttributes(names = {"newUser" ,"userData", "authenticatedUser"})
 public class UsersController {
 
     private final UsersService usersService;
@@ -31,49 +33,45 @@ public class UsersController {
         this.usersService = usersService;
     }
 
-    @ModelAttribute("newUserData")
-    public UserDto getNewUserData() {
-        return new UserDto();
-    }
-
-    @GetMapping("/admin")
-    public String adminAccess() {
-        return "redirect:/users/admin/list";
+    @ModelAttribute("newUser")
+    public User getNewUser() {
+        System.out.println(new User());
+        return new User();
     }
 
     @GetMapping("/user/{userId}")
     public String userAccess(@PathVariable("userId") long id) {
-        return "redirect:/users/user/show/" + id;
+        return "redirect:/user/show/" + id;
     }
 
-    @GetMapping("/admin/list")
-    @ModelAttribute("users")
-    public List<User> listUsers() {
-        return usersService.listUsers();
+    @GetMapping("/admin")
+    public String showAdminUI(Model model) {
+        System.out.println(model.containsAttribute("newUser"));
+        model.addAttribute("users", usersService.listUsers());
+        return "mainPage";
     }
 
-    @GetMapping("/user/show/{userId}")
-    public String showUser(@PathVariable("userId") long id, Model model) {
-        User user = usersService.getUserById(id);
-        model.addAttribute("user", user);
-        return "userInfo";
+    @PostMapping("/admin")
+    public String create(@ModelAttribute("newUser") User user, SessionStatus sessionStatus) {
+        usersService.save(user);
+        sessionStatus.setComplete();
+        return "redirect:/admin";
+    }
+
+    @DeleteMapping("/admin/{id}")
+    public String deleteUser(@PathVariable("id") Long id) {
+        usersService.delete(id);
+        return "redirect:/admin";
+    }
+
+    @GetMapping("/user")
+    public String showUserUI(Model model) {
+        return "mainPage";
     }
 
     @GetMapping(value = "/admin", params = "action=delete")
     public String deleteUser(@RequestParam("userId") long id) {
         usersService.delete(id);
-        return "redirect:/users/admin/list";
-    }
-
-    @PostMapping(value = "/admin", params = "action=showCreateUserForm")
-    public String showCreateUserForm() {
-        return "createUserForm";
-    }
-
-    @PostMapping(value = "/admin", params = "action=create")
-    public String create(@ModelAttribute("newUserData") UserDto userDto, SessionStatus sessionStatus) {
-        usersService.save(usersService.createUserFromDto(userDto));
-        sessionStatus.setComplete();
         return "redirect:/users/admin/list";
     }
 

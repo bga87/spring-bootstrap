@@ -24,7 +24,7 @@ import java.util.Optional;
                 columnNames = {"name", "surname", "age", "job_id"}
                 ),
         @UniqueConstraint(
-                columnNames = {"login"}
+                columnNames = {"email"}
                 )
 })
 public class User implements UserDetails {
@@ -129,7 +129,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return securityDetails.getLogin();
+        return securityDetails.getEmail();
     }
 
     @Override
