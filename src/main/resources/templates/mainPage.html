@@ -34,12 +34,12 @@
 							<h1>Admin panel</h1>
 							<nav>
 								<div class="nav nav-tabs" id="nav-tab" role="tablist">
-									<a class="nav-link active" id="nav-userstable-tab" data-toggle="tab" href="#nav-userstable" role="tab" aria-controls="nav-userstable" aria-selected="true">Users table</a>
-									<a class="nav-link" id="nav-newuser-tab" data-toggle="tab" href="#nav-newuser" role="tab" aria-controls="nav-newuser" aria-selected="false">New User</a>
+									<a th:classappend="${newUserValidationError == null ? 'active' : ''}" class="nav-link" id="nav-userstable-tab" data-toggle="tab" href="#nav-userstable" role="tab" aria-controls="nav-userstable" th:attrappend="aria-selected=${newUserValidationError == null ? 'true' : 'false'}">Users table</a>
+									<a th:classappend="${newUserValidationError != null ? 'active' : ''}" class="nav-link" id="nav-newuser-tab" data-toggle="tab" href="#nav-newuser" role="tab" aria-controls="nav-newuser" th:attrappend="aria-selected=${newUserValidationError != null ? 'true' : 'false'}">New User</a>
 								</div>
 							</nav>
 							<div class="tab-content border border-top-0 rounded-bottom" id="nav-tabContent">
-								<div class="tab-pane fade show active" id="nav-userstable" role="tabpanel" aria-labelledby="nav-userstable-tab">
+								<div th:classappend="${newUserValidationError == null ? 'show active' : ''}" class="tab-pane fade" id="nav-userstable" role="tabpanel" aria-labelledby="nav-userstable-tab">
 									<div class="border-bottom pl-4 py-2 bg-light">
 										<span class="h4">All users</span>
 									</div>
@@ -73,7 +73,7 @@
 														</div>
 													</td>
 													<td class="align-middle text-center border-left">
-														<button type="button" class="btn btn-info">Edit</button>
+														<button type="button" class="btn btn-info" data-toggle="modal" data-target="#editUserModal" th:attrappend="data-userid=${user.id}">Edit</button>
 														<button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#deleteUserModal" th:attrappend="data-userid=${user.id}">Delete</button>
 													</td>
 												</tr>
@@ -81,7 +81,7 @@
 										</table>
 									</div>
 								</div>
-								<div class="tab-pane fade" id="nav-newuser" role="tabpanel" aria-labelledby="nav-newuser-tab">
+								<div th:classappend="${newUserValidationError != null ? 'show active' : ''}" class="tab-pane fade" id="nav-newuser" role="tabpanel" aria-labelledby="nav-newuser-tab">
 									<div class="border-bottom pl-4 py-2 bg-light">
 										<span class="h4">Add new users</span>
 									</div>
@@ -89,22 +89,22 @@
 										<form style="width: 30%" class="text-center" method="POST" th:action="@{/admin}"  th:object="${newUser}" novalidate>
 											<div class="form-group">
 												<label class="h5 font-weight-bold" for="name">First name<span class="text-danger">*</span></label>
-												<input type="text" class="form-control is-invalid" th:field="*{name}" required>
-												<div class="invalid-feedback">
+												<input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{name}" required>
+												<div th:if="${#fields.hasErrors('name')}" class="invalid-feedback" th:errors="*{name}">
 													First name error msg.
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="h5 font-weight-bold" for="surname">Surname<span class="text-danger">*</span></label>
-												<input type="text" class="form-control is-invalid" th:field="*{surname}" required>
-												<div class="invalid-feedback">
+												<input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{surname}" required>
+												<div th:if="${#fields.hasErrors('surname')}" class="invalid-feedback" th:errors="*{surname}">
 													Surname error msg.
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="h5 font-weight-bold" for="age">Age<span class="text-danger">*</span></label>
-												<input type="number" class="form-control is-invalid" th:field="*{age}" required>
-												<div class="invalid-feedback">
+												<input type="number" class="form-control" th:errorclass="is-invalid" th:field="*{age}" required>
+												<div th:if="${#fields.hasErrors('age')}" class="invalid-feedback" th:errors="*{age}">
 													Age error msg.
 												</div>
 											</div>
@@ -118,15 +118,15 @@
 											</div>
 											<div class="form-group">
 												<label class="h5 font-weight-bold" for="securityDetails.email">Email<span class="text-danger">*</span></label>
-												<input type="email" class="form-control is-invalid" th:field="*{securityDetails.email}" required>
-												<div class="invalid-feedback">
+												<input type="email" class="form-control" th:errorclass="is-invalid" th:field="*{securityDetails.email}" required>
+												<div th:if="${#fields.hasErrors('securityDetails.email')}" class="invalid-feedback" th:errors="*{securityDetails.email}">
 													Email error msg.
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="h5 font-weight-bold" for="securityDetails.password">Password<span class="text-danger">*</span></label>
-												<input type="password" class="form-control is-invalid"  th:field="*{securityDetails.password}" required>
-												<div class="invalid-feedback">
+												<input type="password" class="form-control" th:errorclass="is-invalid" th:field="*{securityDetails.password}" required>
+												<div th:if="${#fields.hasErrors('securityDetails.password')}" class="invalid-feedback" th:errors="*{securityDetails.password}">
 													Password error msg.
 												</div>
 											</div>
@@ -249,6 +249,66 @@
 				</div>
 			</div>
 		</div>
+		<!-- Редактирование пользователя -->
+		<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="editUserModalLabel">Please edit user data and confirm to apply changes</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body d-flex justify-content-center">
+						<form style="width: 65%;" class="text-center" th:method="PATCH">
+							<div class="form-group">
+								<label class="h5 font-weight-bold" for="id">ID</label>
+								<input type="text" class="form-control text-center" id="id" name="id" disabled>
+							</div>
+							<div class="form-group">
+								<label class="h5 font-weight-bold" for="name">First name</label>
+								<input type="text" class="form-control text-center" id="name" name="name">
+							</div>
+							<div class="form-group">
+								<label class="h5 font-weight-bold" for="surname">Surname</span></label>
+								<input type="text" class="form-control text-center" id="surname" name="surname">
+							</div>
+							<div class="form-group">
+								<label class="h5 font-weight-bold" for="age">Age</label>
+								<input type="number" class="form-control text-center" id="age" name="age">
+							</div>
+							<div class="form-group">
+								<label class="h5 font-weight-bold" for="job.name">Job</label>
+								<input type="text" class="form-control text-center" id="job.name" name="job.name">
+							</div>
+							<div class="form-group">
+								<label class="h5 font-weight-bold" for="job.salary">Salary</label>
+								<input type="text" class="form-control text-center" id="job.salary" name="job.salary">
+							</div>
+							<div class="form-group">
+								<label class="h5 font-weight-bold" for="securityDetails.email">Email</label>
+								<input type="email" class="form-control text-center" id="securityDetails.email" name="securityDetails.email">
+							</div>
+							<div class="form-group">
+								<label class="h5 font-weight-bold" for="securityDetails.password">Password</label>
+								<input type="password" class="form-control text-center" id="securityDetails.password" name="securityDetails.password">
+							</div>
+							<div class="form-group">
+								<label class="h5 font-weight-bold" for="roles">Roles</label>
+								<select class="form-control text-center" id="securityDetails.roles" name="securityDetails.roles" multiple size="2">
+									<option>ADMIN</option>
+									<option>USER</option>
+								</select>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer justify-content-center">
+						<button id="editConfirmBtn" type="button" class="btn btn-danger">Confirm</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<!-- Подключаем bootstrap -->
 		<script src="jquery/jquery-3.5.1.min.js"></script>
 		<script src="bootstrap-4.5.3/js/bootstrap.min.js"></script>
@@ -280,8 +340,35 @@
 				var modal = $(this)
 				modal.find('#roles').children().removeAttr('selected')
 			});
-			$('#delConfirmBtn').click(function() {
-				$('#deleteUserModal form').submit()
+			$('#editUserModal').on('show.bs.modal', function (event) {
+				var button = $(event.relatedTarget) // Button that triggered the modal
+				var userId = button.data('userid') // Extract info from data-* attributes
+				// Update the modal's content with jQuery
+				var modal = $(this)
+				modal.find('#id').val(userId)
+				modal.find('#name').val($('#name-' + userId).text())
+				modal.find('#surname').val($('#surname-' + userId).text())
+				modal.find('#age').val($('#age-' + userId).text())
+				modal.find('#job\\.name').val($('#job-' + userId).text())
+				modal.find('#job\\.salary').val($('#salary-' + userId).text())
+				modal.find('#securityDetails\\.email').val($('#email-' + userId).text())
+				modal.find('#securityDetails\\.roles').children().each(function() {
+					var availableRole = $(this);
+					$('#roles-' + userId + ' div').children('span').each(function() {
+						if ($(this).text().toLowerCase() === availableRole.text().toLowerCase()) {
+							availableRole.attr('selected', '')
+							return false
+						}
+					})
+				})
+				modal.find('.modal-body form').attr('action', 'http://localhost:8080/admin/' + userId)
+			});
+			$('#editUserModal').on('hide.bs.modal', function () {
+				var modal = $(this)
+				modal.find('#securityDetails\\.roles').children().removeAttr('selected')
+			});
+			$('#editConfirmBtn').click(function() {
+				$('#editUserModal form').submit()
 			});
 		</script>
 	</body>

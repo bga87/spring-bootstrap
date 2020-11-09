@@ -20,11 +20,12 @@ public class Job {
     private String name;
 
     @Column(nullable = false)
-    private int salary;
+    private Integer salary;
 
-    public Job() {}
+    public Job() {
+    }
 
-    public Job(String name, int salary) {
+    public Job(String name, Integer salary) {
         this.name = name;
         this.salary = salary;
     }
@@ -41,11 +42,11 @@ public class Job {
         this.name = name;
     }
 
-    public int getSalary() {
+    public Integer getSalary() {
         return salary;
     }
 
-    public void setSalary(int salary) {
+    public void setSalary(Integer salary) {
         this.salary = salary;
     }
 
@@ -53,7 +54,7 @@ public class Job {
     public boolean equals(Object obj) {
         return this == obj || ((obj instanceof Job) &&
                 ((Job) obj).getName().equalsIgnoreCase(getName()) &&
-                ((Job) obj).getSalary() == getSalary());
+                ((Job) obj).getSalary().equals(getSalary()));
     }
 
     @Override

@@ -8,6 +8,9 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -15,9 +18,14 @@ import java.util.Set;
 
 @Embeddable
 public class SecurityDetails {
+
+    @NotBlank(message = "Email is required")
+    @Email(message="Not a valid email address format")
     @Column(nullable = false)
     private String email;
 
+    @NotBlank(message = "Password is required")
+    @Size(min = 3, message = "Password must be at least 3 characters long")
     @Column(nullable = false)
     private String password;
 

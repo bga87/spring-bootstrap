@@ -2,11 +2,11 @@ package com.jm.task.controllers;
 
 
 import com.jm.task.domain.User;
-import com.jm.task.dto.UserDto;
 import com.jm.task.services.UsersService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +19,13 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.util.List;
 
 
 @Controller
 @RequestMapping
-@SessionAttributes(names = {"newUser" ,"userData", "authenticatedUser"})
+@SessionAttributes(names = {"newUser"})
 public class UsersController {
 
     private final UsersService usersService;
@@ -35,24 +36,22 @@ public class UsersController {
 
     @ModelAttribute("newUser")
     public User getNewUser() {
-        System.out.println(new User());
         return new User();
-    }
-
-    @GetMapping("/user/{userId}")
-    public String userAccess(@PathVariable("userId") long id) {
-        return "redirect:/user/show/" + id;
     }
 
     @GetMapping("/admin")
     public String showAdminUI(Model model) {
-        System.out.println(model.containsAttribute("newUser"));
         model.addAttribute("users", usersService.listUsers());
         return "mainPage";
     }
 
     @PostMapping("/admin")
-    public String create(@ModelAttribute("newUser") User user, SessionStatus sessionStatus) {
+    public String create(@ModelAttribute("newUser") @Valid User user, Errors errors, Model model, SessionStatus sessionStatus) {
+        if (errors.hasErrors()) {
+            model.addAttribute("users", usersService.listUsers());
+            model.addAttribute("newUserValidationError", true);
+            return "mainPage";
+        }
         usersService.save(user);
         sessionStatus.setComplete();
         return "redirect:/admin";
@@ -65,7 +64,7 @@ public class UsersController {
     }
 
     @GetMapping("/user")
-    public String showUserUI(Model model) {
+    public String showUserUI() {
         return "mainPage";
     }
 
@@ -75,19 +74,19 @@ public class UsersController {
         return "redirect:/users/admin/list";
     }
 
-    @GetMapping(value = "/admin", params = "action=showUpdateUserForm")
-    public String showUpdateUserForm(@RequestParam("userId") long id, Model model) {
-        UserDto userData = new UserDto(usersService.getUserById(id));
-        model.addAttribute("userData", userData);
-        return "updateUserForm";
-    }
+//    @GetMapping(value = "/admin", params = "action=showUpdateUserForm")
+//    public String showUpdateUserForm(@RequestParam("userId") long id, Model model) {
+//        UserDto userData = new UserDto(usersService.getUserById(id));
+//        model.addAttribute("userData", userData);
+//        return "updateUserForm";
+//    }
 
-    @PostMapping(value = "/admin", params = "action=update")
-    public String updateUser(@ModelAttribute("userData") UserDto userDto, SessionStatus sessionStatus) {
-        usersService.update(userDto.getId(), usersService.createUserFromDto(userDto));
-        sessionStatus.setComplete();
-        return "redirect:/users/admin/list";
-    }
+//    @PostMapping(value = "/admin", params = "action=update")
+//    public String updateUser(@ModelAttribute("userData") UserDto userDto, SessionStatus sessionStatus) {
+//        usersService.update(userDto.getId(), usersService.createUserFromDto(userDto));
+//        sessionStatus.setComplete();
+//        return "redirect:/users/admin/list";
+//    }
 
     @ExceptionHandler
     public String handleException(Exception ex, Model model, HttpSession session) {

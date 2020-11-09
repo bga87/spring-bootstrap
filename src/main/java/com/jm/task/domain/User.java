@@ -14,6 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,24 +36,29 @@ public class User implements UserDetails {
     @GeneratedValue(generator = "ID_GENERATOR")
     private Long id;
 
+    @NotBlank(message = "Name is required")
     @Column(nullable = false)
     private String name;
 
+    @NotBlank(message = "Surname is required")
     @Column(nullable = false)
     private String surname;
 
+    @NotNull(message = "Age is required")
     @Column(nullable = false)
-    private byte age;
+    private Byte age;
 
+    @Valid
     private SecurityDetails securityDetails;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn
     private Job job;
 
-    public User() {}
+    public User() {
+    }
 
-    public User(String name, String surname, byte age, Job job, SecurityDetails securityDetails) {
+    public User(String name, String surname, Byte age, Job job, SecurityDetails securityDetails) {
         this.name = name;
         this.surname = surname;
         this.age = age;
@@ -78,11 +86,11 @@ public class User implements UserDetails {
         this.surname = surname;
     }
 
-    public byte getAge() {
+    public Byte getAge() {
         return age;
     }
 
-    public void setAge(byte age) {
+    public void setAge(Byte age) {
         this.age = age;
     }
 
@@ -107,7 +115,7 @@ public class User implements UserDetails {
         return this == obj || (obj instanceof User &&
                 ((User) obj).name.equalsIgnoreCase(name) &&
                 ((User) obj).surname.equalsIgnoreCase(surname) &&
-                ((User) obj).age == age &&
+                ((User) obj).age.equals(age) &&
                 Objects.equals(job, ((User) obj).job) &&
                 Objects.equals(securityDetails, ((User) obj).securityDetails));
     }
