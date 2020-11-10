@@ -56,7 +56,7 @@ public class WebRequestSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .regexMatchers("\\/", "\\/\\?.*", "\\/bootstrap.*", "\\/jquery.*").permitAll()
                 .antMatchers("/user/**").access("hasAuthority('ROLE_USER') and !hasAuthority('ROLE_ADMIN')")
-                .regexMatchers(HttpMethod.DELETE, "/admin/1000/*").denyAll()
+                .regexMatchers(HttpMethod.DELETE, "\\/admin\\/1000[\\/]?.*").denyAll()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/**").denyAll()
                 .and()
