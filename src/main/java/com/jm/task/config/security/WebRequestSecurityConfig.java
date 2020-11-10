@@ -6,14 +6,12 @@ import com.jm.task.domain.Role;
 import com.jm.task.domain.SecurityDetails;
 import com.jm.task.domain.User;
 import com.jm.task.services.UsersService;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 import java.util.Set;
@@ -48,11 +46,6 @@ public class WebRequestSecurityConfig extends WebSecurityConfigurerAdapter {
         );
     }
 
-    @Bean
-    public UserIdMatcher userIdMatcher() {
-        return new UserIdMatcher();
-    }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(usersService).passwordEncoder(NoOpPasswordEncoder.getInstance());
@@ -61,25 +54,16 @@ public class WebRequestSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .regexMatchers("/", "/bootstrap.*", "/jquery.*").permitAll()
-//                .antMatchers("/user/show/{userId}").access(
-//                "@userIdMatcher.isAuthenticatedUserId(authentication, #userId) or hasAuthority('ROLE_ADMIN')"
-//        )
+                .regexMatchers("\\/", "\\/\\?.*", "\\/bootstrap.*", "\\/jquery.*").permitAll()
                 .antMatchers("/user/**").access("hasAuthority('ROLE_USER') and !hasAuthority('ROLE_ADMIN')")
-                .regexMatchers("/admin/1000/*").denyAll()
+                .regexMatchers(HttpMethod.DELETE, "/admin/1000/*").denyAll()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/**").denyAll()
                 .and()
                 .formLogin().loginPage("/").successHandler(new LoginSuccessHandler())
                 .and()
-                .exceptionHandling().accessDeniedPage("/users/authorizationFailure")
+                .exceptionHandling().accessDeniedPage("/accessDenied")
                 .and()
                 .csrf().disable();
-    }
-
-    private static class UserIdMatcher {
-        public boolean isAuthenticatedUserId(Authentication auth, long id) {
-            return ((User) auth.getPrincipal()).getId() == id;
-        }
     }
 }

@@ -1,10 +1,12 @@
 package com.jm.task.controllers.converters;
 
+
 import com.jm.task.domain.Role;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
+
 
 @Component
 public class StringToRoleConverter implements Converter<String, Role> {

@@ -120,7 +120,9 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserByLogin(String login) {
-        return entityManager.createQuery("SELECT u FROM User u LEFT JOIN FETCH u.securityDetails.roles " +
+        return entityManager.createQuery("SELECT u FROM User u " +
+                "LEFT JOIN FETCH u.securityDetails.roles " +
+                "LEFT JOIN FETCH u.job " +
                 "WHERE u.securityDetails.email = :login", User.class)
                 .setParameter("login", login)
                 .getSingleResult();
@@ -169,5 +171,4 @@ public class UserDaoImpl implements UserDao {
     private boolean jobsAreTheSame(Optional<Job> originalJobOpt, Optional<Job> newJobOpt) {
         return Objects.equals(originalJobOpt.orElse(null), newJobOpt.orElse(null));
     }
-
 }

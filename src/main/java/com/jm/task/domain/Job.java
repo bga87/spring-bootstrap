@@ -1,12 +1,15 @@
 package com.jm.task.domain;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.AssertTrue;
 import java.util.Objects;
+
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "salary"}))
@@ -17,7 +20,7 @@ public class Job {
     private Long id;
 
     @Column(nullable = false, length = 50)
-    private String name;
+    private String name = "";
 
     @Column(nullable = false)
     private Integer salary;
@@ -28,6 +31,11 @@ public class Job {
     public Job(String name, Integer salary) {
         this.name = name;
         this.salary = salary;
+    }
+
+    @AssertTrue(message="Salary is required for employed user")
+    public boolean isSalaryValid() {
+        return name.isEmpty() || salary != null;
     }
 
     public Long getId() {

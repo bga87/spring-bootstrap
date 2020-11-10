@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
+
 @Entity
 @Table(uniqueConstraints = {
         @UniqueConstraint(
@@ -51,6 +52,7 @@ public class User implements UserDetails {
     @Valid
     private SecurityDetails securityDetails;
 
+    @Valid
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn
     private Job job;
@@ -68,6 +70,10 @@ public class User implements UserDetails {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
