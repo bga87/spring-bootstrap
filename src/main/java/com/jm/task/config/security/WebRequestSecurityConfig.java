@@ -6,6 +6,7 @@ import com.jm.task.domain.Role;
 import com.jm.task.domain.SecurityDetails;
 import com.jm.task.domain.User;
 import com.jm.task.services.UsersService;
+import org.apache.catalina.connector.RequestFacade;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,9 +56,9 @@ public class WebRequestSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .regexMatchers("\\/", "\\/\\?.*", "\\/bootstrap.*", "\\/jquery.*").permitAll()
+                .regexMatchers("\\/", "\\/\\?.*", "\\/bootstrap.*", "\\/jquery.*", "\\/favicon.*").permitAll()
                 .antMatchers("/user/**").access("hasAuthority('ROLE_USER') and !hasAuthority('ROLE_ADMIN')")
-                .regexMatchers(HttpMethod.DELETE, "\\/admin\\/1000[\\/]?.*").denyAll()
+                .regexMatchers(HttpMethod.DELETE, "/admin/1000/*").denyAll()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/**").denyAll()
                 .and()
