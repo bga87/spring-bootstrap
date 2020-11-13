@@ -8,11 +8,15 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnitUtil;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Repository
@@ -21,39 +25,28 @@ public class UserDaoImpl implements UserDao {
     @PersistenceContext
     EntityManager entityManager;
 
+    //Ok
     @Override
     public Long save(User user) throws IllegalStateException {
-        setJobFromPersistentIfAlreadyExists(user, entityManager);
-        setRolesFromPersistentIfAlreadyExist(user, entityManager);
-
-        Long savedUserId;
-        if (userHasUniqueLogin(user, entityManager)) {
-            if (!userIsAlreadyPersisted(user, entityManager)) {
-                entityManager.persist(user);
-                savedUserId = user.getId();
-            } else {
-                throw new IllegalStateException("Пользователь " + user + " был сохранен в базе данных ранее");
-            }
-        } else {
-            throw new IllegalStateException("Логин " + user.getSecurityDetails().getEmail() + " уже занят! Придумайте другой логин.");
+        // проверяем, что user'а с такими данными в базе нет
+        if (isAlreadyInDatabase(user)) {
+            throw new IllegalStateException("User " + user + " has already been saved to database");
         }
-
-        return savedUserId;
+        // проверяем, что email user'а уникален в базе
+        if (!hasUniqueEmail(user)) {
+            throw new IllegalStateException(
+                    "Email " + user.getSecurityDetails().getEmail() + " belongs to another user; must be unique");
+        }
+        setJobFromPersistentIfAlreadyExists(user);
+        setRolesFromPersistentIfAlreadyExist(user);
+        entityManager.persist(user);
+        return user.getId();
     }
 
-    private void setRolesFromPersistentIfAlreadyExist(User user, EntityManager entityManager) {
-        Set<Role> correspondingPersistentRoles = user.getSecurityDetails().getRoles().stream()
-                .filter(role -> role.getId() != null)
-                .map(entityManager::merge)
-                .collect(Collectors.toSet());
-
-        if (correspondingPersistentRoles.size() > 0) {
-            user.getSecurityDetails().setRoles(correspondingPersistentRoles);
-        }
-    }
-
-    private boolean userIsAlreadyPersisted(User user, EntityManager entityManager) {
+    //Ok
+    private boolean isAlreadyInDatabase(User user) {
         return entityManager.createQuery("SELECT u FROM User u " +
+                "LEFT JOIN FETCH u.job " +
                 "WHERE u.name = :name AND u.surname = :surname AND u.age = :age", User.class)
                 .setParameter("name", user.getName())
                 .setParameter("surname", user.getSurname())
@@ -62,14 +55,34 @@ public class UserDaoImpl implements UserDao {
                 .contains(user);
     }
 
-    private boolean userHasUniqueLogin(User user, EntityManager entityManager) {
+    //Ok
+    private boolean hasUniqueEmail(User user) {
         return entityManager.createQuery("SELECT u FROM User u " +
-                "WHERE u.securityDetails.email = :login", User.class)
-                .setParameter("login", user.getSecurityDetails().getEmail())
-                .getResultList().size() == 0;
+                "WHERE u.securityDetails.email = :email", User.class)
+                .setParameter("email", user.getSecurityDetails().getEmail())
+                .getResultList().isEmpty();
     }
 
-    private void setJobFromPersistentIfAlreadyExists(User user, EntityManager entityManager) {
+    //Ok
+    private void setRolesFromPersistentIfAlreadyExist(User user) {
+        Set<Role> userRoles = user.getSecurityDetails().getRoles();
+        if (!userRoles.isEmpty()) {
+            Set<Role> persistedRoles = userRoles.stream()
+                    .filter(role -> role.getId() != null)
+                    .map(entityManager::merge)
+                    .collect(Collectors.toSet());
+            Set<Role> transientRoles = userRoles.stream()
+                    .filter(role -> role.getId() == null)
+                    .collect(Collectors.toSet());
+            user.getSecurityDetails().setRoles(
+                    Stream.concat(persistedRoles.stream(), transientRoles.stream())
+                            .collect(Collectors.toSet())
+            );
+        }
+    }
+
+    //Ок
+    private void setJobFromPersistentIfAlreadyExists(User user) {
         user.getJob().flatMap(userJob ->
                 entityManager.createQuery("SELECT j FROM Job j " +
                         "WHERE j.name = :name AND j.salary = :salary", Job.class)
@@ -79,23 +92,25 @@ public class UserDaoImpl implements UserDao {
         ).ifPresent(user::setJob);
     }
 
+    //Ok
     @Override
     public void delete(long id) {
-        User loadedUser = entityManager.find(User.class, id);
+        User deletionCandidate = entityManager.find(User.class, id);
 
-        if (loadedUser != null) {
-            entityManager.remove(loadedUser);
-            loadedUser.getJob().ifPresent(job -> removeIfOrphanJob(job, entityManager));
+        if (deletionCandidate != null) {
+            entityManager.remove(deletionCandidate);
+            deletionCandidate.getJob().ifPresent(this::removeIfOrphanJob);
         }
     }
 
-    private void removeIfOrphanJob(Job job, EntityManager entityManager) {
-        List<User> usersWithTheSameJob = entityManager.createQuery("SELECT u FROM User u " +
-                "WHERE u.job = :job", User.class)
+    //Ok
+    private void removeIfOrphanJob(Job job) {
+        List usersWithTheSameJob = entityManager.createQuery("SELECT u.id FROM User u " +
+                "WHERE u.job = :job")
                 .setParameter("job", job)
                 .getResultList();
 
-        if (usersWithTheSameJob.size() == 0) {
+        if (usersWithTheSameJob.isEmpty()) {
             // на эту запись job больше никто не ссылается из таблицы user, ее можно удалять
             entityManager.remove(job);
         }
@@ -105,7 +120,8 @@ public class UserDaoImpl implements UserDao {
     public List<User> listUsers() {
         return entityManager.createQuery("SELECT DISTINCT u FROM User u " +
                 "LEFT JOIN FETCH u.securityDetails.roles " +
-                "LEFT JOIN FETCH u.job", User.class).getResultList();
+                "LEFT JOIN FETCH u.job", User.class)
+                .getResultList();
     }
 
     @Override
@@ -138,7 +154,7 @@ public class UserDaoImpl implements UserDao {
             return;
         }
 
-        if (!userIsAlreadyPersisted(user, entityManager)) {
+        if (!isAlreadyInDatabase(user)) {
             targetUser.setName(user.getName());
             targetUser.setSurname(user.getSurname());
             targetUser.setAge(user.getAge());
@@ -146,18 +162,18 @@ public class UserDaoImpl implements UserDao {
             if (!targetUser.getSecurityDetails().equals(user.getSecurityDetails())) {
                 // данные доступа поменялись
                 if (!loginsAreTheSame(targetUser.getSecurityDetails().getEmail(), user.getSecurityDetails().getEmail()) &&
-                        !userHasUniqueLogin(user, entityManager)) {
+                        !hasUniqueEmail(user)) {
                     throw new IllegalStateException("Логин " + user.getSecurityDetails().getEmail() + " уже занят! Придумайте другой логин.");
                 }
                 targetUser.setSecurityDetails(user.getSecurityDetails());
-                setRolesFromPersistentIfAlreadyExist(targetUser, entityManager);
+                setRolesFromPersistentIfAlreadyExist(targetUser);
             }
 
             if (!jobsAreTheSame(targetUser.getJob(), user.getJob())) {
-                setJobFromPersistentIfAlreadyExists(user, entityManager);
+                setJobFromPersistentIfAlreadyExists(user);
                 Optional<Job> oldUserJob = targetUser.getJob();
                 targetUser.setJob(user.getJob().orElse(null));
-                oldUserJob.ifPresent(oldJob -> removeIfOrphanJob(oldJob, entityManager));
+                oldUserJob.ifPresent(oldJob -> removeIfOrphanJob(oldJob));
             }
         } else {
             throw new IllegalStateException("Пользователь " + user + " был сохранен в базе данных ранее");

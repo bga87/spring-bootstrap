@@ -14,14 +14,11 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.net.http.HttpRequest;
 
 
 @Controller
@@ -39,11 +36,6 @@ public class UsersController {
     public User getNewUser() {
         return new User();
     }
-
-//    @ModelAttribute("updatedUser")
-//    public User getUpdatedUser() {
-//        return new User();
-//    }
 
     @GetMapping("/admin")
     public String showAdminUI(Model model) {
@@ -70,7 +62,7 @@ public class UsersController {
     }
 
     @PatchMapping("/admin")
-    public String updateUser(@ModelAttribute("updatedUser") @Valid User user, Errors errors, Model model, SessionStatus sessionStatus) {
+    public String updateUser(@ModelAttribute("updatedUser") @Valid User user, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("users", usersService.listUsers());
             model.addAttribute("updatedUser", user);
@@ -78,9 +70,7 @@ public class UsersController {
             return "mainPage";
         }
         usersService.update(user.getId(), user);    // refactor!
-//        sessionStatus.setComplete();
         return "redirect:/admin";
-
     }
 
     @GetMapping("/user")
@@ -91,7 +81,7 @@ public class UsersController {
     @ExceptionHandler
     public String handleException(Exception ex, Model model, HttpSession session) {
         model.addAttribute("errorMessage", ex.getMessage());
-        session.removeAttribute("newUserData");
+        session.removeAttribute("newUser");
         return "errorInfo";
     }
 

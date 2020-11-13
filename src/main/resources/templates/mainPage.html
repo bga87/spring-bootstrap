@@ -90,21 +90,21 @@
 											<div class="form-group">
 												<label class="h5 font-weight-bold" for="name">First name<span class="text-danger">*</span></label>
 												<input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{name}" required>
-												<div th:if="${#fields.hasErrors('name')}" class="invalid-feedback" th:errors="*{name}">
+												<div class="invalid-feedback" th:errors="*{name}">
 													First name error msg.
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="h5 font-weight-bold" for="surname">Surname<span class="text-danger">*</span></label>
 												<input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{surname}" required>
-												<div th:if="${#fields.hasErrors('surname')}" class="invalid-feedback" th:errors="*{surname}">
+												<div class="invalid-feedback" th:errors="*{surname}">
 													Surname error msg.
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="h5 font-weight-bold" for="age">Age<span class="text-danger">*</span></label>
 												<input type="number" class="form-control" th:errorclass="is-invalid" th:field="*{age}" required>
-												<div th:if="${#fields.hasErrors('age')}" class="invalid-feedback" th:errors="*{age}">
+												<div class="invalid-feedback" th:errors="*{age}">
 													Age error msg.
 												</div>
 											</div>
@@ -115,31 +115,34 @@
 											<div class="form-group">
 												<label class="h5 font-weight-bold" for="job.salary">Salary</label>
 												<input type="number" class="form-control" th:classappend="${#fields.hasErrors('job.salaryValid')}? is-invalid" th:field="*{job.salary}">
-												<div th:if="${#fields.hasErrors('job.salaryValid')}" class="invalid-feedback" th:errors="*{job.salaryValid}">
+												<div class="invalid-feedback" th:errors="*{job.salaryValid}">
 													Salary error msg.
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="h5 font-weight-bold" for="securityDetails.email">Email<span class="text-danger">*</span></label>
 												<input type="email" class="form-control" th:errorclass="is-invalid" th:field="*{securityDetails.email}" required>
-												<div th:if="${#fields.hasErrors('securityDetails.email')}" class="invalid-feedback" th:errors="*{securityDetails.email}">
+												<div class="invalid-feedback" th:errors="*{securityDetails.email}">
 													Email error msg.
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="h5 font-weight-bold" for="securityDetails.password">Password<span class="text-danger">*</span></label>
 												<input type="password" class="form-control" th:errorclass="is-invalid" th:field="*{securityDetails.password}" required>
-												<div th:if="${#fields.hasErrors('securityDetails.password')}" class="invalid-feedback" th:errors="*{securityDetails.password}">
+												<div class="invalid-feedback" th:errors="*{securityDetails.password}">
 													Password error msg.
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="h5 font-weight-bold" for="securityDetails.roles">Roles</label>
-												<select class="form-control" th:field="*{securityDetails.roles}" multiple th:size="${application.availableRoles.size()}">
+												<select class="form-control" th:errorclass="is-invalid" th:field="*{securityDetails.roles}" multiple th:size="${application.availableRoles.size()}">
 													<option th:each="role : ${application.availableRoles}"
 															th:value="${role.roleName}"
 															th:text="${role}" class="text-uppercase">ROLE</option>
 												</select>
+												<div class="invalid-feedback" th:each="err : ${#fields.errors('securityDetails.roles')}" th:text="${err.substring(err.lastIndexOf(': ') + 2)}">
+													Roles error msg.
+												</div>
 											</div>
 											<button type="submit" class="btn btn-success mt-3"><span class="h4">Add new user</span></button>
 										</form>
@@ -332,21 +335,21 @@
 							<div class="form-group">
 								<label class="h5 font-weight-bold" for="name">First name</label>
 								<input type="text" class="form-control text-center" th:errorclass="is-invalid" th:field="*{name}">
-								<div th:if="${#fields.hasErrors('name')}" class="invalid-feedback" th:errors="*{name}">
+								<div class="invalid-feedback" th:errors="*{name}">
 									Name error msg.
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="h5 font-weight-bold" for="surname">Surname</span></label>
 								<input type="text" class="form-control text-center" th:errorclass="is-invalid" th:field="*{surname}">
-								<div th:if="${#fields.hasErrors('surname')}" class="invalid-feedback" th:errors="*{surname}">
+								<div class="invalid-feedback" th:errors="*{surname}">
 									Surname error msg.
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="h5 font-weight-bold" for="age">Age</label>
 								<input type="number" class="form-control text-center" th:errorclass="is-invalid" th:field="*{age}">
-								<div th:if="${#fields.hasErrors('age')}" class="invalid-feedback" th:errors="*{age}">
+								<div class="invalid-feedback" th:errors="*{age}">
 									Age error msg.
 								</div>
 							</div>
@@ -357,32 +360,34 @@
 							<div class="form-group">
 								<label class="h5 font-weight-bold" for="job.salary">Salary</label>
 								<input type="text" class="form-control text-center" th:classappend="${#fields.hasErrors('job.salaryValid')}? is-invalid" th:field="*{job.salary}">
-								<div th:if="${#fields.hasErrors('job.salaryValid')}" class="invalid-feedback" th:errors="*{job.salaryValid}">
+								<div class="invalid-feedback" th:errors="*{job.salaryValid}">
 									Salary error msg.
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="h5 font-weight-bold" for="securityDetails.email">Email</label>
 								<input type="email" class="form-control text-center" th:errorclass="is-invalid" th:field="*{securityDetails.email}">
-								<div th:if="${#fields.hasErrors('securityDetails.email')}" class="invalid-feedback" th:errors="*{securityDetails.email}">
+								<div class="invalid-feedback" th:errors="*{securityDetails.email}">
 									Email error msg.
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="h5 font-weight-bold" for="securityDetails.password">Password</label>
 								<input type="password" class="form-control text-center" th:errorclass="is-invalid" th:field="*{securityDetails.password}">
-								<div th:if="${#fields.hasErrors('securityDetails.password')}" class="invalid-feedback" th:errors="*{securityDetails.password}">
+								<div class="invalid-feedback" th:errors="*{securityDetails.password}">
 									Password error msg.
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="h5 font-weight-bold" for="securityDetails.roles">Roles</label>
-								<select class="form-control text-center" th:field="*{securityDetails.roles}" multiple th:size="${application.availableRoles.size()}">
+								<select class="form-control text-center" th:errorclass="is-invalid" th:field="*{securityDetails.roles}" multiple th:size="${application.availableRoles.size()}">
 									<option th:each="role : ${application.availableRoles}"
 											th:value="${role.roleName}"
 											th:text="${role}" class="text-uppercase">ROLE</option>
 								</select>
-
+								<div class="invalid-feedback" th:each="err : ${#fields.errors('securityDetails.roles')}" th:text="${err.substring(err.lastIndexOf(': ') + 2)}">
+									Roles error msg.
+								</div>
 							</div>
 						</form>
 					</div>

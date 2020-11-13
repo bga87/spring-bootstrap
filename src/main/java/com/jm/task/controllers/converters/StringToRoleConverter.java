@@ -19,6 +19,8 @@ public class StringToRoleConverter implements Converter<String, Role> {
 
     @Override
     public Role convert(String s) {
-        return availableRoles.stream().filter(role -> role.getRoleName().equals(s)).findFirst().orElse(null);
+        return availableRoles.stream()
+                .filter(role -> role.getRoleName().equals(s)).findFirst()
+                .orElseThrow(() -> new RuntimeException("Unknown role parameter " + s + " in request"));
     }
 }

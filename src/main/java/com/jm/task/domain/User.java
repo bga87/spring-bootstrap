@@ -53,7 +53,7 @@ public class User implements UserDetails {
     private SecurityDetails securityDetails;
 
     @Valid
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn
     private Job job;
 
@@ -122,8 +122,7 @@ public class User implements UserDetails {
                 ((User) obj).name.equalsIgnoreCase(name) &&
                 ((User) obj).surname.equalsIgnoreCase(surname) &&
                 ((User) obj).age.equals(age) &&
-                Objects.equals(job, ((User) obj).job) &&
-                Objects.equals(securityDetails, ((User) obj).securityDetails));
+                Objects.equals(job, ((User) obj).job));
     }
 
     @Override
@@ -168,12 +167,10 @@ public class User implements UserDetails {
 
     @Override
     public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", age=" + age +
-                ", job=" + job +
-                ", securityDetails=" + securityDetails +
-                '}';
+        return "[name: '" + name + '\'' +
+                ", surname: '" + surname + '\'' +
+                ", age: " + age +
+                ", job: " + getJob().map(Job::toString).orElse("n/a") +
+                ']';
     }
 }

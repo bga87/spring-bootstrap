@@ -30,5 +30,4 @@ public class SpringBootCrudApplication {
         context.setAttribute("availableRoles", roles);
         return roles;
     }
-
 }
