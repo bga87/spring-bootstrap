@@ -8,9 +8,10 @@ import java.util.List;
 
 
 public interface UsersService extends UserDetailsService {
-    Long save(User user) throws IllegalStateException;
-    void delete(long id);
+
+    User save(User user) throws IllegalStateException;
+    void delete(Long id);
     List<User> listUsers();
-    User getUserById(long id);
-    void update(long id, User user) throws IllegalStateException;
+    void update(Long idToUpdate, User modifiedUser) throws IllegalStateException;
+
 }

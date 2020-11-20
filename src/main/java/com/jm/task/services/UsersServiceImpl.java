@@ -22,14 +22,13 @@ public class UsersServiceImpl implements UsersService {
 
     @Transactional
     @Override
-    public Long save(User user) throws IllegalStateException {
-        setJobToNullIfJobNameIsEmpty(user);
+    public User save(User user) throws IllegalStateException {
         return userDao.save(user);
     }
 
     @Transactional
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
         userDao.delete(id);
     }
 
@@ -41,27 +40,14 @@ public class UsersServiceImpl implements UsersService {
 
     @Transactional
     @Override
-    public User getUserById(long id) {
-        return userDao.getUserById(id);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userDao.getUserByLogin(email);
     }
 
     @Transactional
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return userDao.getUserByLogin(s);
+    public void update(Long idToUpdate, User modifiedUser) throws IllegalStateException {
+        userDao.update(idToUpdate, modifiedUser);
     }
 
-    @Transactional
-    @Override
-    public void update(long id, User user) throws IllegalStateException {
-        userDao.update(id, user);
-    }
-
-    private void setJobToNullIfJobNameIsEmpty(User user) {
-        user.getJob().ifPresent(job -> {
-            if (job.getName().isEmpty()) {
-                user.setJob(null);
-            }
-        });
-    }
 }

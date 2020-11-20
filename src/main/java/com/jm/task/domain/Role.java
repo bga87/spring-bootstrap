@@ -24,15 +24,11 @@ public class Role implements GrantedAuthority {
     @Column(name = "role_name", nullable = false)
     private String roleName;
 
-    @Column(name = "display_name", nullable = false)
-    private String displayName;
-
     public Role() {
     }
 
-    public Role(String roleName, String displayName) {
-        this.roleName = roleName;
-        this.displayName = displayName;
+    public Role(String roleName) {
+        this.roleName = "ROLE_" + roleName.toUpperCase();
     }
 
     public Long getId() {
@@ -41,18 +37,6 @@ public class Role implements GrantedAuthority {
 
     public String getRoleName() {
         return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     @Override
@@ -73,6 +57,7 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String toString() {
-        return displayName;
+        return roleName.substring(5);
     }
+
 }

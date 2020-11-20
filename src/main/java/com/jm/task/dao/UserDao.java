@@ -7,10 +7,11 @@ import java.util.List;
 
 
 public interface UserDao {
-    Long save(User user) throws IllegalStateException;
+
+    User save(User user) throws IllegalStateException;
     void delete(long id);
     List<User> listUsers();
-    User getUserById(long id);
-    User getUserByLogin(String login);
-    void update(long id, User user) throws IllegalStateException;
+    User getUserByLogin(String email);
+    void update(Long idToUpdate, User modifiedUser) throws IllegalStateException;
+
 }

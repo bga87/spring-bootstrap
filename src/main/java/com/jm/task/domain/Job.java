@@ -76,4 +76,5 @@ public class Job {
                 ", salary: " + salary +
                 ']';
     }
+
 }

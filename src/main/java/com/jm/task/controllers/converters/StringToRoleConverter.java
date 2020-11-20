@@ -23,4 +23,5 @@ public class StringToRoleConverter implements Converter<String, Role> {
                 .filter(role -> role.getRoleName().equals(s)).findFirst()
                 .orElseThrow(() -> new RuntimeException("Unknown role parameter " + s + " in request"));
     }
+
 }

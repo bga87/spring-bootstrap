@@ -22,4 +22,5 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .anyMatch(roleName -> roleName.equalsIgnoreCase("role_admin"));
         httpServletResponse.sendRedirect(isAdmin ? "/admin" : "/user");
     }
+
 }

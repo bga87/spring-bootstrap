@@ -20,7 +20,7 @@
                 <div class="alert alert-danger rounded mx-auto text-monospace">
                     <b>You don't have enough privileges to perform this action!</b>
                 </div>
-                <a th:href="@{${#authorization.expr('hasRole(''ROLE_ADMIN'')') ? '/admin' : '/user'}}" type="button" class="btn btn-danger mx-auto">Back to main page</a>
+                <a th:if="${#authorization.expr('hasAnyRole(''ROLE_ADMIN'', ''ROLE_USER'')')}" th:href="@{${#authorization.expr('hasRole(''ROLE_ADMIN'')') ? '/admin' : '/user'}}" type="button" class="btn btn-danger mx-auto">Back to main page</a>
             </div>
         </div>
     </body>

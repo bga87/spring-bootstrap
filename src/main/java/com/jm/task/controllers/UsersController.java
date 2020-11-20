@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 
 
 @Controller
 @RequestMapping
-@SessionAttributes(names = {"newUser"})
+@SessionAttributes(names = {"availableRoles", "newUser", "users"})
 public class UsersController {
 
     private final UsersService usersService;
@@ -33,21 +33,24 @@ public class UsersController {
     }
 
     @ModelAttribute("newUser")
-    public User getNewUser() {
+    public User newUser() {
         return new User();
     }
 
+    @ModelAttribute("users")
+    public List<User> users() {
+        return usersService.listUsers();
+    }
+
     @GetMapping("/admin")
-    public String showAdminUI(Model model) {
-        model.addAttribute("users", usersService.listUsers());
+    public String showAdminUI() {
         return "mainPage";
     }
 
     @PostMapping("/admin")
-    public String createUser(@ModelAttribute("newUser") @Valid User user, Errors errors, Model model, SessionStatus sessionStatus) {
+    public String createUser(@ModelAttribute("newUser") @Valid User user, Errors errors,
+                             SessionStatus sessionStatus) {
         if (errors.hasErrors()) {
-            model.addAttribute("users", usersService.listUsers());
-            model.addAttribute("newUserValidationError", true);
             return "mainPage";
         }
         usersService.save(user);
@@ -56,20 +59,21 @@ public class UsersController {
     }
 
     @DeleteMapping("/admin/{id}")
-    public String deleteUser(@PathVariable("id") Long id) {
+    public String deleteUser(@PathVariable("id") Long id, SessionStatus sessionStatus) {
         usersService.delete(id);
+        sessionStatus.setComplete();
         return "redirect:/admin";
     }
 
-    @PatchMapping("/admin")
-    public String updateUser(@ModelAttribute("updatedUser") @Valid User user, Errors errors, Model model) {
+    @PatchMapping("/admin/{id}")
+    public String updateUser(@PathVariable("id") Long id, @ModelAttribute("updatedUser") @Valid User user,
+                             Errors errors, Model model, SessionStatus sessionStatus) {
         if (errors.hasErrors()) {
-            model.addAttribute("users", usersService.listUsers());
-            model.addAttribute("updatedUser", user);
-            model.addAttribute("updateUserValidationError", true);
+            model.addAttribute("userId", id);
             return "mainPage";
         }
-        usersService.update(user.getId(), user);    // refactor!
+        usersService.update(id, user);
+        sessionStatus.setComplete();
         return "redirect:/admin";
     }
 
@@ -79,9 +83,8 @@ public class UsersController {
     }
 
     @ExceptionHandler
-    public String handleException(Exception ex, Model model, HttpSession session) {
+    public String handleException(Exception ex, Model model) {
         model.addAttribute("errorMessage", ex.getMessage());
-        session.removeAttribute("newUser");
         return "errorInfo";
     }
 
@@ -89,4 +92,5 @@ public class UsersController {
     public String accessDenied() {
         return "accessDenied";
     }
+
 }
